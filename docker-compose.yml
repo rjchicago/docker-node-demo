@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  demo1:
+    image: docker_demo1
+    container_name: docker_demo1
+    build: .
+    command: ["npm", "run", "start:debug"]
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./package.json:/usr/app/package.json
+      - ./src:/usr/app/src
