@@ -1,7 +1,24 @@
+const {join} = require('path');
 const express = require('express');
 const docker = require('./docker');
 const app = express();
 const port = 3000;
+
+
+// app.use('/favicon.ico', express.static(join(__dirname, `public/favicon.ico`));
+
+let mode = 'docker';
+const getFavicon = () => join(__dirname, `public/${mode}.ico`);
+app.get('/favicon.ico', (req, res) => {
+    res.setHeader('content-type', 'image');
+    res.sendFile(getFavicon());
+});
+app.get('/mode/:mode', (req, res) => {
+    const match = /(docker|hacker)/i.exec(req.params.mode);
+    mode = match && match[0] || 'docker';
+    res.setHeader('content-type', 'image');
+    res.sendFile(getFavicon());
+});
 
 app.get('/*', (req, res) => {
     const { method, path, query, headers } = req;
@@ -19,5 +36,5 @@ app.get('/*', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}/ps`);
+    console.log(`http://localhost:${port}/ps`);
 });
