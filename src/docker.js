@@ -1,5 +1,7 @@
 const { execSync } = require("child_process");
 
+const accepts = {'application/json': ` --format '{{json .}}'`};
+
 const execString = cmd => execSync(cmd).toString();
 const execJsonObject = cmd => JSON.parse(execSync(cmd).toString());
 const execJsonPerRow = (cmd) => {
@@ -8,21 +10,17 @@ const execJsonPerRow = (cmd) => {
     return rows.map(JSON.parse);
 }
 
-const formatAccept = (accept) => {
-    let format = '';
-    switch (accept) {
-        case 'application/json':
-            format = ` --format '{{json .}}'`
-            break;
-        default:
-            break;
-    }
-    return format;
-};
-
 exports.get = (method, path, query, headers) => {
-    const parts = path.split('/').filter(p => p.length > 0);
-    let cmd = `docker ${parts.join(' ')} ${formatAccept(headers.accept)}`;
+    const segments = path.split('/').filter(p => p.length > 0);
+    const parseSegment = (segment) => {
+        return Object.prototype.hasOwnProperty.call(query, segment)
+            ? Array.isArray(query[segment]) ? query[segment].join(' ') : query[segment]
+            : segment;
+    };
+    const cmd = `docker ${segments.map(parseSegment).join(' ')} ${accepts[query.accept || headers.accept] || ''}`;
+    if (Object.prototype.hasOwnProperty.call(query, 'test')) {
+        return cmd;
+    }
     let isJson = cmd.indexOf('json') > 0;
     try {
         return isJson

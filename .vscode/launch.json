@@ -12,7 +12,8 @@
             "address": "localhost",
             "localRoot": "${workspaceRoot}",
             "remoteRoot": "/usr/app",
-            "protocol": "inspector"
+            "protocol": "inspector",
+            "restart": true
         }
     ]
 }
