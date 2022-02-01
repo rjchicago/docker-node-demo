@@ -3,6 +3,8 @@ const docker = require('./docker');
 const app = express();
 const port = 3000;
 
+app.use('/favicon.ico', express.static(join(__dirname, `public/favicon.ico`)));
+
 app.get('/*', (req, res) => {
     const { method, path, query, headers } = req;
     try {
